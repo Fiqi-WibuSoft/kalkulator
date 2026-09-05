@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Fiqi Pedia</title>
+  <style>
+    :root {
+      --primary-blue: #1e88e5;
+      --secondary-pink: #e91e63;
+      --bg-light: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-dark: #2c3e50;
+      --income-green: #2ecc71;
+      --expense-red: #e74c3c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: var(--bg-light);
+      min-height: 100vh;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-blue), var(--secondary-pink));
+      color: white;
+      padding: 24px 20px 20px;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(233, 30, 99, 0.2);
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    header p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .summary-card {
+      background: var(--card-bg);
+      margin: -15px 16px 16px 16px;
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .total-balance {
+      text-align: center;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed #eee;
+    }
+
+    .total-balance span {
+      font-size: 0.8rem;
+      color: #777;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .total-balance h2 {
+      font-size: 1.6rem;
+      color: var(--primary-blue);
+      margin-top: 2px;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      text-align: center;
+    }
+
+    .detail-item p {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .detail-item h3 {
+      font-size: 1rem;
+      margin-top: 2px;
+    }
+
+    .income-text { color: var(--income-green); }
+    .expense-text { color: var(--expense-red); }
+
+    .content {
+      padding: 0 16px 24px 16px;
+      flex: 1;
+    }
+
+    .form-card {
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      border-top: 4px solid var(--secondary-pink);
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-blue);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--primary-blue), var(--secondary-pink));
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(30, 136, 229, 0.3);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+
+    .history-title {
+      font-size: 1rem;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .transaction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .transaction-item {
+      background: var(--card-bg);
+      padding: 12px 14px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 5px solid var(--primary-blue);
+    }
+
+    .transaction-item.pemasukan {
+      border-left-color: var(--income-green);
+    }
+
+    .transaction-item.pengeluaran {
+      border-left-color: var(--expense-red);
+    }
+
+    .item-info h4 {
+      font-size: 0.9rem;
+      color: var(--text-dark);
+    }
+
+    .item-info p {
+      font-size: 0.75rem;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .item-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .item-amount {
+      text-align: right;
+    }
+
+    .item-amount .amount {
+      font-size: 0.95rem;
+      font-weight: bold;
+    }
+
+    .btn-delete {
+      background: none;
+      border: none;
+      color: #bbb;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    .btn-delete:hover {
+      color: var(--expense-red);
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #aaa;
+      font-size: 0.85rem;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <header>
+      <h1>Kalkulator Fiqi Pedia</h1>
+      <p>Pencatat Tabungan & Keuangan Digital</p>
+    </header>
+
+    <div class="summary-card">
+      <div class="total-balance">
+        <span>Sisa Tabungan</span>
+        <h2 id="totalBalance">Rp 0</h2>
+      </div>
+      <div class="details-grid">
+        <div class="detail-item">
+          <p>Total Pemasukan</p>
+          <h3 id="totalIncome" class="income-text">Rp 0</h3>
+        </div>
+        <div class="detail-item">
+          <p>Total Pengeluaran</p>
+          <h3 id="totalExpense" class="expense-text">Rp 0</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="form-card">
+        <form id="transactionForm">
+          <div class="form-group">
+            <label for="type">Jenis Transaksi</label>
+            <select id="type" class="form-control" required>
+              <option value="pemasukan">Pemasukan (Gaji / Lainnya)</option>
+              <option value="pengeluaran">Pengeluaran</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="amount">Jumlah (Rp)</label>
+            <input type="number" id="amount" class="form-control" placeholder="Contoh: 500000" required min="1">
+          </div>
+
+          <div class="form-group">
+            <label for="title">Keterangan / Digunakan Untuk</label>
+            <input type="text" id="title" class="form-control" placeholder="Contoh: Gaji Bulanan / Beli Kuota" required>
+          </div>
+
+          <div class="form-group">
+            <label for="method">Bank / E-Wallet</label>
+            <select id="method" class="form-control" required>
+              <optgroup label="Bank Transfer">
+                <option value="Bank BCA">Bank BCA</option>
+                <option value="Bank Mandiri">Bank Mandiri</option>
+                <option value="Bank BRI">Bank BRI</option>
+                <option value="Bank BNI">Bank BNI</option>
+                <option value="Bank BSI">Bank BSI</option>
+                <option value="Bank CIMB Niaga">Bank CIMB Niaga</option>
+                <option value="Bank Permata">Bank Permata</option>
+                <option value="Bank Danamon">Bank Danamon</option>
+                <option value="Seabank">Seabank</option>
+                <option value="Bank Neo Commerce">Bank Neo Commerce</option>
+                <option value="Bank Lainnya">Bank Lainnya</option>
+              </optgroup>
+              <optgroup label="E-Wallet">
+                <option value="DANA">DANA</option>
+                <option value="OVO">OVO</option>
+                <option value="GoPay">GoPay</option>
+                <option value="ShopeePay">ShopeePay</option>
+                <option value="LinkAja">LinkAja</option>
+                <option value="AstraPay">AstraPay</option>
+                <option value="E-Wallet Lainnya">E-Wallet Lainnya</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="datetime">Waktu Transaksi</label>
+            <input type="datetime-local" id="datetime" class="form-control" required>
+          </div>
+
+          <button type="submit" class="btn-submit">Simpan Transaksi</button>
+        </form>
+      </div>
+
+      <h3 class="history-title">Riwayat Transaksi</h3>
+      <div id="transactionList" class="transaction-list">
+        </div>
+    </div>
+  </div>
+
+  <script>
+    let transactions = JSON.parse(localStorage.getItem('fiqi_pedia_transactions')) || [];
+
+    const form = document.getElementById('transactionForm');
+    const typeInput = document.getElementById('type');
+    const amountInput = document.getElementById('amount');
+    const titleInput = document.getElementById('title');
+    const methodInput = document.getElementById('method');
+    const datetimeInput = document.getElementById('datetime');
+
+    const totalBalanceEl = document.getElementById('totalBalance');
+    const totalIncomeEl = document.getElementById('totalIncome');
+    const totalExpenseEl = document.getElementById('totalExpense');
+    const transactionListEl = document.getElementById('transactionList');
+
+    function setInitialDateTime() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      datetimeInput.value = now.toISOString().slice(0, 16);
+    }
+
+    function formatRupiah(number) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0
+      }).format(number);
+    }
+
+    function formatDateTimeString(dateTimeStr) {
+      const date = new Date(dateTimeStr);
+      const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+      return date.toLocaleDateString('id-ID', options).replace('.', ':');
+    }
+
+    function updateSummary() {
+      const income = transactions
+        .filter(t => t.type === 'pemasukan')
+        .reduce((acc, t) => acc + t.amount, 0);
+
+      const expense = transactions
+        .filter(t => t.type === 'pengeluaran')
+        .reduce((acc, t) => acc + t.amount, 0);
+
+      const balance = income - expense;
+
+      totalIncomeEl.textContent = formatRupiah(income);
+      totalExpenseEl.textContent = formatRupiah(expense);
+      totalBalanceEl.textContent = formatRupiah(balance);
+    }
+
+    function renderList() {
+      transactionListEl.innerHTML = '';
+
+      if (transactions.length === 0) {
+        transactionListEl.innerHTML = '<div class="empty-state">Belum ada transaksi dicatat</div>';
+        return;
+      }
+
+      transactions.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
+
+      transactions.forEach(t => {
+        const item = document.createElement('div');
+        item.classList.add('transaction-item', t.type);
+
+        const isIncome = t.type === 'pemasukan';
+        const sign = isIncome ? '+' : '-';
+        const amountClass = isIncome ? 'income-text' : 'expense-text';
+
+        item.innerHTML = `
+          <div class="item-info">
+            <h4>${t.title}</h4>
+            <p>${formatDateTimeString(t.datetime)}</p>
+            <span class="item-badge">${t.method}</span>
+          </div>
+          <div class="item-amount">
+            <span class="amount ${amountClass}">${sign} ${formatRupiah(t.amount)}</span>
+            <button class="btn-delete" onclick="deleteTransaction(${t.id})">&times;</button>
+          </div>
+        `;
+
+        transactionListEl.appendChild(item);
+      });
+    }
+
+    function saveToStorage() {
+      localStorage.setItem('fiqi_pedia_transactions', JSON.stringify(transactions));
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const newTransaction = {
+        id: Date.now(),
+        type: typeInput.value,
+        amount: parseFloat(amountInput.value),
+        title: titleInput.value,
+        method: methodInput.value,
+        datetime: datetimeInput.value
+      };
+
+      transactions.push(newTransaction);
+      saveToStorage();
+      updateSummary();
+      renderList();
+
+      form.reset();
+      setInitialDateTime();
+    });
+
+    function deleteTransaction(id) {
+      transactions = transactions.filter(t => t.id !== id);
+      saveToStorage();
+      updateSummary();
+      renderList();
+    }
+
+    setInitialDateTime();
+    updateSummary();
+    renderList();
+  </script>
+</body>
+</html>
